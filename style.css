@@ -1,0 +1,89 @@
+:root{
+  /* Telegram сам подставляет --tg-theme-*; тут фолбэки на случай запуска вне Telegram */
+  --bg: var(--tg-theme-bg-color, #ffffff);
+  --text: var(--tg-theme-text-color, #16181c);
+  --hint: var(--tg-theme-hint-color, #8a8f98);
+  --link: var(--tg-theme-link-color, #2f86eb);
+  --btn: var(--tg-theme-button-color, #2f86eb);
+  --btn-text: var(--tg-theme-button-text-color, #ffffff);
+  --card: var(--tg-theme-secondary-bg-color, #f2f3f5);
+  --sep: color-mix(in srgb, var(--text) 12%, transparent);
+  --up: #0F9D58;
+  --down: #DB4437;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+button,select,input,textarea{ font-family:inherit; }  /* кнопки не наследуют шрифт по умолчанию */
+html,body{ margin:0; padding:0; background:var(--bg); color:var(--text);
+  font:15px/1.4 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif; }
+body{ padding-bottom:64px; }              /* место под таб-бар */
+.hidden{ display:none !important; }
+
+.topbar{ position:sticky; top:0; z-index:5; background:var(--bg);
+  padding:12px 16px 8px; border-bottom:1px solid var(--sep);
+  display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.topbar .title{ font-weight:700; font-size:17px; }
+.topbar .fresh{ font-size:12px; color:var(--hint); white-space:nowrap; }
+
+.screen{ padding:12px; }
+
+/* KPI-карточки */
+.kpis{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.kpi{ background:var(--card); border-radius:12px; padding:10px 12px; }
+.kpi .k-label{ font-size:11px; color:var(--hint); text-transform:uppercase; letter-spacing:.3px; }
+.kpi .k-value{ font-size:18px; font-weight:700; margin-top:2px; }
+.kpi .k-sub{ font-size:12px; color:var(--hint); margin-top:1px; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; }
+.kpi.wide{ grid-column:1 / -1; }
+
+/* Таблица */
+.table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.grid{ width:100%; border-collapse:collapse; font-size:14px; }
+.grid th,.grid td{ padding:8px 8px; text-align:right; white-space:nowrap; }
+.grid th:first-child,.grid td:first-child{ text-align:center; width:28px; }
+.grid th:nth-child(2),.grid td:nth-child(2){ text-align:left; }
+.grid thead th{ position:sticky; top:0; background:var(--bg); color:var(--hint);
+  font-weight:600; font-size:12px; border-bottom:1px solid var(--sep); cursor:pointer;
+  user-select:none; }
+.grid thead th.sorted::after{ content:" ▾"; }
+.grid thead th.sorted.asc::after{ content:" ▴"; }
+.grid tbody tr{ border-bottom:1px solid var(--sep); }
+.grid tbody tr:active{ background:var(--card); }
+.grid .name{ display:flex; align-items:center; gap:8px; }
+.grid .name img{ width:26px; height:26px; border-radius:50%; object-fit:cover; background:var(--card); flex:none; }
+.grid .name .nm{ overflow:hidden; text-overflow:ellipsis; max-width:38vw; }
+.up{ color:var(--up); } .down{ color:var(--down); } .flat{ color:var(--hint); }
+
+/* Карточка канала */
+.picker-row{ margin-bottom:12px; }
+#channel-select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--sep);
+  background:var(--card); color:var(--text); font-size:15px; }
+.card-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.card-head img{ width:52px; height:52px; border-radius:50%; object-fit:cover; background:var(--card); flex:none; }
+.card-head .h-name{ font-weight:700; font-size:17px; }
+.card-head .h-sub{ color:var(--hint); font-size:13px; margin-top:2px; }
+.metrics{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+.metric{ background:var(--card); border-radius:10px; padding:8px 10px; }
+.metric .m-l{ font-size:11px; color:var(--hint); }
+.metric .m-v{ font-size:16px; font-weight:600; margin-top:2px; }
+.chart-box{ background:var(--card); border-radius:12px; padding:12px; margin-top:4px; }
+.chart-box .c-title{ font-size:12px; color:var(--hint); margin-bottom:8px; }
+.chart-box svg{ width:100%; height:auto; display:block; }
+.chart-labels{ display:flex; justify-content:space-between; font-size:11px; color:var(--hint); margin-top:6px; }
+
+/* Лента */
+.feed-item{ display:flex; gap:10px; padding:10px 4px; border-bottom:1px solid var(--sep); }
+.feed-item .f-date{ color:var(--hint); font-size:12px; white-space:nowrap; padding-top:1px; }
+.feed-item .f-text{ font-size:14px; }
+
+.badge{ font-size:12px; font-weight:600; }
+
+/* Таб-бар */
+.tabbar{ position:fixed; left:0; right:0; bottom:0; z-index:10; display:flex;
+  background:var(--bg); border-top:1px solid var(--sep); }
+.tabbar .tab{ flex:1; border:0; background:none; color:var(--hint);
+  padding:8px 0 10px; font-size:11px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.tabbar .tab span{ font-size:20px; }
+.tabbar .tab.active{ color:var(--link); }
+
+.state{ padding:24px 16px; text-align:center; color:var(--hint); font-size:14px; }
+.state code{ color:var(--text); background:var(--card); padding:2px 6px; border-radius:6px; }

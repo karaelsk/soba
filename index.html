@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Дашборд каналов</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">Дашборд каналов</div>
+    <div class="fresh" id="fresh">…</div>
+  </header>
+
+  <main id="app">
+    <!-- Экран: Сводка -->
+    <section class="screen" id="screen-summary">
+      <div class="kpis" id="kpis"></div>
+      <div class="table-wrap">
+        <table class="grid" id="grid">
+          <thead id="grid-head"></thead>
+          <tbody id="grid-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Экран: Канал -->
+    <section class="screen hidden" id="screen-channel">
+      <div class="picker-row">
+        <select id="channel-select"></select>
+      </div>
+      <div id="channel-card"></div>
+    </section>
+
+    <!-- Экран: События -->
+    <section class="screen hidden" id="screen-feed">
+      <div id="feed-list"></div>
+    </section>
+
+    <div class="state" id="state"></div>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-screen="summary"><span>📊</span>Сводка</button>
+    <button class="tab" data-screen="channel"><span>📈</span>Канал</button>
+    <button class="tab" data-screen="feed"><span>📰</span>События</button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
