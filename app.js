@@ -4,7 +4,10 @@ const BACKEND = 'https://script.google.com/macros/s/AKfycbw4c-ffoQhKDj61XSClS6ID
 
 /* ===== Telegram ===== */
 const tg = window.Telegram && window.Telegram.WebApp;
-if (tg) { tg.ready(); tg.expand(); }
+if (tg) {
+  tg.ready(); tg.expand();
+  if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); // свайп вниз больше не закрывает
+}
 const initData = (tg && tg.initData) || '';
 
 /* ===== Состояние ===== */
@@ -23,6 +26,15 @@ function signedPct(n){ if(n===null||n===undefined||n==='') return '—';
   let v=Number(n); if(Math.abs(v)<=1) v*=100; return (v>0?'+':'')+v.toFixed(1).replace('.',',')+'%'; }
 function cls(n){ return (n>0)?'up':(n<0)?'down':'flat'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// Google Drive-ссылка -> прямая картинка для <img> (таблицу не трогаем)
+function driveImg(raw){
+  const v=String(raw==null?'':raw).trim();
+  if(!v) return '';
+  if(/lh3\.googleusercontent|drive\.google\.com\/thumbnail/.test(v)) return v; // уже прямая
+  const m = v.match(/\/d\/([-\w]{20,})/) || v.match(/[?&]id=([-\w]{20,})/) || v.match(/^([-\w]{25,})$/);
+  return m ? ('https://drive.google.com/thumbnail?id='+m[1]+'&sz=w200') : v;
+}
 
 // ▲/▼ по изменению позиции (rank_prev -> rank, меньше = выше)
 function arrowHtml(c){
@@ -54,7 +66,8 @@ const COLS = [
   {key:'er',          label:'ER',     cell:c=>pct(c.er)},
 ];
 function nameCell(c){
-  const img = c.avatar ? `<img src="${esc(c.avatar)}" loading="lazy" onerror="this.style.visibility='hidden'">` : '';
+  const a = driveImg(c.avatar);
+  const img = a ? `<img src="${esc(a)}" loading="lazy" onerror="this.style.visibility='hidden'">` : '';
   return `<div class="name">${img}<span class="nm">${esc(shortName(c))}</span>${arrowHtml(c)}</div>`;
 }
 function shortName(c){ const n=String(c.name||c.username||''); return n.split(' / ')[0] || n; }
@@ -127,7 +140,7 @@ async function renderChannelCard(username){
   const metric=(l,v)=>`<div class="metric"><div class="m-l">${esc(l)}</div><div class="m-v">${v}</div></div>`;
   box.innerHTML =
     `<div class="card-head">
-       ${c.avatar?`<img src="${esc(c.avatar)}" onerror="this.style.visibility='hidden'">`:''}
+       ${driveImg(c.avatar)?`<img src="${esc(driveImg(c.avatar))}" onerror="this.style.visibility='hidden'">`:''}
        <div><div class="h-name">${esc(shortName(c))} ${arrowHtml(c)}</div>
        <div class="h-sub">@${esc(c.username)} · место ${c.rank==null?'—':c.rank}</div></div>
      </div>
@@ -201,7 +214,9 @@ async function boot(){
   const state=document.getElementById('state');
   try{
     SUMMARY = await api('summary');
-    document.getElementById('fresh').textContent = SUMMARY.updated_at ? ('обн. '+SUMMARY.updated_at) : '';
+    const raw = String(SUMMARY.updated_at || '');
+    const m = raw.match(/\d{1,2}\.\d{1,2}\.\d{2,4}(?:[ ,]+\d{1,2}:\d{2})?/); // только дата/время
+    document.getElementById('fresh').textContent = m ? ('Обновлено: '+m[0]) : raw;
     renderKpis(SUMMARY.channels);
     renderGrid();
     state.textContent='';
