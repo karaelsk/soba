@@ -78,8 +78,9 @@ function computeKpis(list){
   const leader = withM.slice().sort((a,b)=>b.views_month-a.views_month)[0];
   const byDelta = list.filter(c=>c.delta_pct!=null).slice().sort((a,b)=>b.delta_pct-a.delta_pct);
   const best = byDelta[0], worst = byDelta[byDelta.length-1];
-  const rising = list.filter(c=>Number(c.delta_pct)>0).length;
-  const falling = list.filter(c=>Number(c.delta_pct)<0).length;
+  const norm=c=>String(c.trend_30d||'').trim().toLowerCase();
+  const rising = list.filter(c=>norm(c)==='green').length;   // 30д Color из CHART_DATA
+  const falling = list.filter(c=>norm(c)==='red').length;
   return {total, leader, best, worst, rising, falling};
 }
 function renderKpis(list){
@@ -159,10 +160,10 @@ async function renderChannelCard(username){
        <div class="chart-labels" id="chart-labels"></div></div>`;
   try{
     const s = await api('series', {channel: username});
-    drawChart(s.points||[]);
+    drawChart(s.points||[], c.trend_30d);
   }catch(e){ document.getElementById('chart').textContent='График недоступен'; }
 }
-function drawChart(points){
+function drawChart(points, trend){
   const host=document.getElementById('chart'), lab=document.getElementById('chart-labels');
   if(!points || points.length<2){ host.textContent='Недостаточно данных'; lab.innerHTML=''; return; }
   const W=320,H=120,P=6;
@@ -172,7 +173,8 @@ function drawChart(points){
   const Y=v=>P+(1-(v-min)/range)*(H-2*P);
   let d=''; points.forEach((p,i)=>{ d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)+' '; });
   const area=d+`L${X(n-1).toFixed(1)} ${H-P} L${X(0).toFixed(1)} ${H-P} Z`;
-  const up = vals[n-1] >= vals[0];
+  const t=String(trend||'').trim().toLowerCase();
+  const up = t==='green' ? true : t==='red' ? false : (vals[n-1] >= vals[0]);   // цвет как в CHART_DATA
   const color = up ? 'var(--up)' : 'var(--down)';
   host.innerHTML =
     `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
