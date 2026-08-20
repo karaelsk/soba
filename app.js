@@ -223,9 +223,8 @@ async function boot(){
     renderGrid();
     state.textContent='';
   }catch(e){
-    const id = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || '—';
     if(String(e.message)==='unauthorized'){
-      state.innerHTML = `Нет доступа. Твой Telegram ID: <code>${esc(id)}</code><br>Передай его администратору для добавления в лист ДОСТУП.`;
+      state.textContent = 'Нет доступа.';
     }else{
       state.textContent = 'Ошибка загрузки: '+e.message;
     }
